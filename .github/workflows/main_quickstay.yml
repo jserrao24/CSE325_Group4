@@ -55,10 +55,11 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_777C837645C64EFEB9D878E1851D7DF9 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_009B0CF5557D4214B1BB12211882DAF9 }}
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'QuickStay'
-          slot-name: 'Production'
-          package: ${{github.workspace}}/myapp
+          - name: Deploy to Azure Web App
+          id: deploy-to-webapp
+          uses: azure/webapps-deploy@v3
+          with:
+            app-name: 'QuickStay'
+            slot-name: 'Production'
+            package: ${{github.workspace}}/VideoGame/bin/Release/net8.0/publish
+  
