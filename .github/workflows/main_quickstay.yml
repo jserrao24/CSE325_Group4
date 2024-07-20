@@ -21,13 +21,12 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-          - name: Build with dotnet
-          run: dotnet build --configuration Release VideoGame/QuickStay.csproj
+      - name: Build with dotnet
+        run: dotnet build --configuration Release VideoGame/QuickStay.csproj
   
-        - name: dotnet publish
-          run: dotnet publish VideoGame/QuickStay.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      - name: dotnet publish
+        run: dotnet publish VideoGame/QuickStay.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
   
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
