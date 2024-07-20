@@ -1,0 +1,73 @@
+h1 {
+    color: #232C31;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    line-height: 2em;
+}
+
+
+
+.reservation-grid {
+    margin-top: 4em;
+}
+
+.reservations-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 20rem);
+    grid-gap: 2rem;
+    justify-content: center;
+    padding-left: 0;
+}
+
+.reservations-cards>li {
+    height: 20rem;
+    position: relative;
+    background-size: cover;
+    border-radius: 0.5rem;
+    list-style-type: none;
+    box-shadow: 0 3px 4px 2px rgba(0, 0, 0, 0.4);
+    transition: 0.1s ease-out;
+}
+
+.reservations-cards>li:hover {
+    transform: scale(1.02);
+}
+
+.reservation-info {
+    border-radius: 0.5rem;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    padding: 1rem 1rem;
+    cursor: pointer;
+    line-height: 1.25rem;
+    background-color: white;
+}
+
+.reservation-info .title {
+    color: black;
+    font-size: 1.4rem;
+    display: block;
+    margin: 0.2rem 0 0.4rem 0;
+    font-family: 'Bahnschrift', Arial, Helvetica, sans-serif;
+    text-transform: uppercase;
+}
+
+.content {
+    display: block;
+}
+
+.button {
+    background-color: #2E5B88;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    border: none;
+    border-radius: 2px;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+}

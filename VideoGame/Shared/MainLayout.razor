@@ -1,0 +1,37 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>QuickStay</PageTitle>
+
+<header class="header">
+    <h1>QuickStay Reservations</h1>
+</header>
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4 auth">
+            <LoginDisplay />
+            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        </div>
+        <div class="landing-image">
+            <image></image>
+            <p>Come stay with us...</p>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+    
+</div>
+<footer class="footer">
+    <ul>
+        <li class="footer-list">
+            <a href="" target="_blank">Contact Us</a>
+        </li>
+    </ul>
+    &copy; @DateTime.Now.Year QuickStay Reservations
+</footer>

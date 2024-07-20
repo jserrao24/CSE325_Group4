@@ -1,0 +1,61 @@
+@page "/admin"
+@using QuickStay.Shared
+
+<PageTitle>Admin Page</PageTitle>
+
+<h3>Admin Page</h3>
+
+<div class="admin-container">
+    <h4>Welcome to the Admin Page</h4>
+    <p>This is the admin page where you will manage employees and hotel information.</p>
+
+    <div class="admin-cards">
+        <div class="card">
+            <div class="card-header">
+                Employee Management
+            </div>
+            <div class="card-body">
+                <p>Here you will manage employees.</p>
+                <button class="btn btn-primary" disabled>Manage Employees</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                Hotel Management
+            </div>
+            <div class="card-body">
+                <p>Here you will manage hotels and rooms.</p>
+                <button class="btn btn-primary" disabled>Manage Hotels</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-container {
+        margin: 20px;
+    }
+    .admin-cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .card {
+        width: 300px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        padding: 10px;
+        font-weight: bold;
+    }
+    .card-body {
+        padding: 10px;
+    }
+    .btn {
+        margin-top: 10px;
+    }
+</style>

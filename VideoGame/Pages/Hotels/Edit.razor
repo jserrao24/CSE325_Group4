@@ -1,0 +1,74 @@
+@page "/hotels/edit/{Id:int}"
+@using QuickStay
+@using Microsoft.AspNetCore.Components.Forms
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h3>Edit Hotel</h3>
+
+@if (hotel == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <EditForm Model="@hotel" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group mb-3">
+            <label for="name">Name:</label>
+            <InputText id="name" class="form-control" @bind-Value="hotel.Name" />
+        </div>
+        <div class="form-group mb-3">
+            <label for="email">Email:</label>
+            <InputText id="email" class="form-control" @bind-Value="hotel.Email" />
+        </div>
+        <div class="form-group mb-3">
+            <label for="phone">Phone:</label>
+            <InputText id="phone" class="form-control" @bind-Value="hotel.Phone" />
+        </div>
+        <div class="form-group mb-3">
+            <label for="imageUrl">Image URL:</label>
+            <InputText id="imageUrl" class="form-control" @bind-Value="hotel.ImageUrl" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-danger" @onclick="@(() => NavigateToHotels())">Cancel</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Hotel hotel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hotel = await HttpClient.GetFromJsonAsync<Hotel>($"{NavigationManager.BaseUri}api/hotels/{Id}");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await HttpClient.PutAsJsonAsync($"{NavigationManager.BaseUri}api/hotels/{Id}", hotel);
+        if (response.IsSuccessStatusCode)
+        {
+            var updatedHotel = await response.Content.ReadFromJsonAsync<Hotel>();
+            Console.WriteLine("Updated Hotel: ");
+            Console.WriteLine(updatedHotel);
+
+            NavigationManager.NavigateTo("/hotels");
+        }
+        else
+        {
+            Console.WriteLine("Failed to update hotel");
+            // Add error handling here
+        }
+    }
+
+    private void NavigateToHotels()
+    {
+        NavigationManager.NavigateTo("/hotels");
+    }
+}

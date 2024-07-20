@@ -1,0 +1,119 @@
+@page "/myreservations"
+@using QuickStay
+@using QuickStay.Data
+@using Microsoft.AspNetCore.Identity
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<PageTitle>My Reservations</PageTitle>
+
+
+<h1>My Reservations</h1>
+
+@if (reservationsUser.Count == 0)
+{
+    <span class="content"><strong>Sorry! No reservations found in your account</strong></span>
+}
+
+<div class="reservation-grid">
+    <ul class="reservations-cards">
+         @foreach (var reservation in reservationsUser)
+        {
+            <li>
+                <div class="reservation-info">
+                    <span class="title">@GetHotelName(@reservation.HotelRoomId)</span>
+                    <span class="content"><strong>Reservation Name:</strong> @reservation.Name</span>
+                    <span class="content"><strong>Start date:</strong> @reservation.StartDate</span>
+                    <span class="content"><strong>End date:</strong> @reservation.EndDate</span>
+                    @if (@reservation.IsConfirmed)
+                    {
+                        <span class="content"><strong>Confirmation: </strong>Confirmed</span>
+                    }
+                    else
+                    {
+                        <span class="content"><strong>Confirmation: </strong>Waiting Approval</span>
+                    }
+
+                    <button class="button" @onclick="@(() => NavigateToEditReservation(reservation.Id))">Update</button>
+                </div>
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+
+    List<Reservation> reservations = new();
+    List<Reservation> reservationsUser = new();
+    List<HotelRoom> hotelRooms = new();
+    
+    
+    List<Hotel> hotels = new();
+    public string? userId;
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+    protected override async Task OnInitializedAsync(){
+        try{
+
+            hotels = await HttpClient.GetFromJsonAsync<List<Hotel>>($"{NavigationManager.BaseUri}api/hotels");
+                hotelRooms = await HttpClient.GetFromJsonAsync<List<HotelRoom>>($"{NavigationManager.BaseUri}api/hotelRooms");
+            reservations = await HttpClient.GetFromJsonAsync<List<Reservation>>($"{NavigationManager.BaseUri}api/reservations");
+            
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user.Identity is not null && user.Identity.IsAuthenticated)
+            {
+                userId = user.Identity.Name;
+                reservations.ForEach(reservation =>
+                {
+                    if (reservation.UserId == userId)
+                    {
+                        reservationsUser.Add(reservation);
+                    }
+                });
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading reservations: {ex.Message}");
+        }
+    }
+
+    public string GetHotelName(int hotelRoomId)
+    {
+        int hotelId = 0;
+        string hotelName = "";
+
+        hotelRooms.ForEach(hotelRoom =>
+        {
+            if (hotelRoom.Id == hotelRoomId)
+            {
+                hotelId = hotelRoom.HotelId;
+            }
+        });
+
+        hotels.ForEach(hotel =>
+        {
+            if (hotel.Id == hotelId)
+            {
+                hotelName = hotel.Name;
+            }
+        });
+
+        return hotelName;
+    }
+    private void NavigateToEditReservation(int reservationId)
+    {
+        NavigationManager.NavigateTo($"/reservation/edit/{reservationId}");
+    } 
+}

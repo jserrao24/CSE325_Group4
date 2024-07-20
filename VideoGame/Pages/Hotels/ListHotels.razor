@@ -1,0 +1,94 @@
+@page "/hotels"
+@using QuickStay
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+<div class="main">
+    <div class="hotel-cards">
+        @foreach (var hotel in hotels)
+        {
+            <div class="hotel-card" style="background-image: url('@hotel.ImageUrl')">
+                <NavLink style="color: white;" href="@($"/hotels/details/{hotel.Id}")">
+                    <div class="hotel-info">
+                        <div>@hotel.Name</div>
+                    </div>
+                </NavLink>
+                <div class="buttons">
+                    <NavLink class="button btn-primary" href="@($"/hotels/edit/{hotel.Id}")"
+                        style="text-decoration: none;display: inline-block;">
+                        Edit</NavLink>
+                    <button class="button btn-danger" @onclick:stopPropagation="true"
+                        @onclick="() => ConfirmDelete(hotel.Id)">Delete</button>
+                </div>
+            </div>
+        }
+    </div>
+    <button class="floating-button" @onclick="NavigateToCreateHotel">
+        <i class="bi bi-plus"></i>
+    </button>
+</div>
+
+@code {
+    List<Hotel> hotels = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            hotels = await HttpClient.GetFromJsonAsync<List<Hotel>>(
+            $"{NavigationManager.BaseUri}api/hotels"); // log the id's of the hotels
+            foreach (var hotel in hotels)
+            {
+                Console.WriteLine($"Hotel ID: {hotel.Id}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading hotels: {ex.Message}");
+            // Consider adding user-friendly error handling
+        }
+    }
+
+    private async Task ConfirmDelete(int id)
+    {
+        Console.WriteLine($"Confirming delete for hotel ID: {id}");
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirmDelete");
+        if (confirmed)
+        {
+            Console.WriteLine("Delete confirmed by user");
+            await DeleteHotel(id);
+        }
+        else
+        {
+            Console.WriteLine("Delete canceled by user");
+        }
+    }
+
+    private async Task DeleteHotel(int id)
+    {
+        try
+        {
+            var response = await HttpClient.DeleteAsync($"{NavigationManager.BaseUri}api/hotels/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Hotel deleted successfully");
+                hotels = hotels.Where(h => h.Id != id).ToList();
+                StateHasChanged(); // Ensure the component re-renders
+            }
+            else
+            {
+                Console.WriteLine("Failed to delete hotel");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting hotel: {ex.Message}");
+        }
+    }
+
+    private void NavigateToCreateHotel()
+    {
+        NavigationManager.NavigateTo("/hotels/create");
+    }
+}

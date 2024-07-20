@@ -1,0 +1,32 @@
+@page "/hotels/details/{Id:int}"
+@using QuickStay
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h3>Hotel Details</h3>
+@if (hotel == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div>
+        <h4>@hotel.Name</h4>
+        <img src="@hotel.ImageUrl" alt="Hotel Image" style="max-width:100%;height:auto;"/>
+        <p>Email: @hotel.Email</p>
+        <p>Phone: @hotel.Phone</p>
+        <!-- Add more details as needed -->
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Hotel hotel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hotel = await HttpClient.GetFromJsonAsync<Hotel>($"{NavigationManager.BaseUri}api/hotels/{Id}");
+    }
+}

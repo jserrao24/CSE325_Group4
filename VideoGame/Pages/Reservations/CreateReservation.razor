@@ -1,0 +1,62 @@
+@* @page "/reservation/create"
+@using QuickStay
+@using Microsoft.AspNetCore.Components.Forms
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h3>Create Reservation</h3>
+
+<EditForm Model="@reservation" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group mb-3">
+        <label for="name">Name:</label>
+        <InputText id="name" class="form-control" @bind-Value="reservation.Name" />
+    </div>
+    <div class="form-group mb-3">
+        <label for="startDate">Start Date:</label>
+        <InputDate id="startDate" class="form-control" @bind-Value="reservation.StartDate" />
+    </div>
+    <div class="form-group mb-3">
+        <label for="endDate">End Date:</label>
+        <InputDate id="endDate" class="form-control" @bind-Value="reservation.EndDate" />
+    </div>
+    @* this part of the room id maybe will already get it when cliking in the room? *@
+    @* <div class="form-group mb-3">
+        <label for="room">Room</label>
+        <InputSelect id="room" class="form-control" @bind-Value="reservation.HotelRoomId" />
+    </div> *@
+@* 
+    <button type="submit" class="btn btn-primary">Save</button>
+    <button type="button" class="btn btn-danger" @onclick="@(() => NavigateToReservations())">Cancel</button>
+</EditForm>
+
+@code {
+    private Reservation reservation = new Reservation();
+    //needs to add the isCOnfirmed field as false
+    //the hotelroom will need to be get here so add the field 
+    //the userid is the email of the user that is logged in. to see how to get this email go to myreservations page
+    private async Task HandleValidSubmit()
+    {
+        var response = await HttpClient.PostAsJsonAsync($"{NavigationManager.BaseUri}api/reservations", reservation);
+        if (response.IsSuccessStatusCode)
+        {
+            var createdReservation = await response.Content.ReadFromJsonAsync<Reservation>();
+            Console.WriteLine("Created Reservation: ");
+            Console.WriteLine(createdReservation);
+
+            NavigationManager.NavigateTo("/myreservations");
+        }
+        else
+        {
+            Console.WriteLine("Failed to create Reservation");
+            // Add error handling here
+        }
+    }
+
+    private void NavigateToReservations()
+    {
+        NavigationManager.NavigateTo("/myreservations");
+    }
+} *@ 

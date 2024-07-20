@@ -1,0 +1,59 @@
+@page "/hotels/create"
+@using QuickStay
+@using Microsoft.AspNetCore.Components.Forms
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<h3>Create Hotel</h3>
+
+<EditForm Model="@hotel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group mb-3">
+        <label for="name">Name:</label>
+        <InputText id="name" class="form-control" @bind-Value="hotel.Name" />
+    </div>
+    <div class="form-group mb-3">
+        <label for="email">Email:</label>
+        <InputText id="email" class="form-control" @bind-Value="hotel.Email" />
+    </div>
+    <div class="form-group mb-3">
+        <label for="phone">Phone:</label>
+        <InputText id="phone" class="form-control" @bind-Value="hotel.Phone" />
+    </div>
+    <div class="form-group mb-3">
+        <label for="imageUrl">Image URL:</label>
+        <InputText id="imageUrl" class="form-control" @bind-Value="hotel.ImageUrl" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <button type="button" class="btn btn-danger" @onclick="@(() => NavigateToHotels())">Cancel</button>
+</EditForm>
+
+@code {
+    private Hotel hotel = new Hotel();
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await HttpClient.PostAsJsonAsync($"{NavigationManager.BaseUri}api/hotels", hotel);
+        if (response.IsSuccessStatusCode)
+        {
+            var createdHotel = await response.Content.ReadFromJsonAsync<Hotel>();
+            Console.WriteLine("Created Hotel: ");
+            Console.WriteLine(createdHotel);
+
+            NavigationManager.NavigateTo("/hotels");
+        }
+        else
+        {
+            Console.WriteLine("Failed to create hotel");
+            // Add error handling here
+        }
+    }
+
+    private void NavigateToHotels()
+    {
+        NavigationManager.NavigateTo("/hotels");
+    }
+}
